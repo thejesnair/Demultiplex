@@ -12,6 +12,20 @@
 
 2. Per-base NT distribution
     1. Use markdown to insert your 4 histograms here.
+
+- 1294_S1_L008_R1_001.fastq.gz.png<br>
+![R1 histogram](https://github.com/thejesnair/Demultiplex/blob/master/Assignment-the-first/1294_S1_L008_R1_001.png)
+
+- 1294_S1_L008_R2_001.fastq.gz.png<br>
+![I1 histogram](https://github.com/thejesnair/Demultiplex/blob/master/Assignment-the-first/1294_S1_L008_R2_001.png)
+
+- 1294_S1_L008_R4_001.fastq.gz.png<br>
+![R2 histogram](https://github.com/thejesnair/Demultiplex/blob/master/Assignment-the-first/1294_S1_L008_R4_001.png)
+
+- 1294_S1_L008_R3_001.fastq.gz.png<br>
+![I2 histogram](https://github.com/thejesnair/Demultiplex/blob/master/Assignment-the-first/1294_S1_L008_R3_001.png)
+
+
     2. For index reads a quality cutoff of 30 is preferred because it equates to 99.9% accuracy and we require high confidence since we are demultiplexing indexes and assigning them to reads. A single error may cause reads to be incorrectly assigned or tossed which we want to avoid. For biological read pairs, a cutoff of Q20 _is_ the minimum acceptable threshold, and generally acceptable, as it equates to a error rate of 1%. However, a Q30 is preferred if we want a higher sensitivity for analyses. Higher sensitivity would be beneficial for situations like detecting low-frequeny variants, mutation detection, limiting false positives, or variant calling.
     3. Determine how many indexes have undetermined (N) base calls: <br>
     ```
