@@ -54,12 +54,8 @@
 Multiple fastq files will be outputted by our script. There will be two fastqs for each dual-matched indexes. In the case of dual-matched indexes, biological read 1 and 2 will have the same dual-matched barcode. The outputted files will look like R1 with index1-index2 and another file for R2 with index2-index1. All unknown reads in R1 will be assigned to an unknown R1 file; all index-hopped reads (mean indexes that are not appropriately matched with their counterpart) will be assigned to R1 index hopped, the same formatting goes for R2.
 
 3. Upload your [4 input FASTQ files](../TEST-input_FASTQ) and your [>=6 expected output FASTQ files](../TEST-output_FASTQ).
-4. [Draft Pseudocode here!](./Pseudocode.md)
+4. [Pseudocode here!](./Pseudocode.md)
 
-Updated Pseudocode below
-```
-
-```
 5. High level functions. For each function, be sure to include:
     1. Description/doc string
     2. Function headers (name and parameters)
