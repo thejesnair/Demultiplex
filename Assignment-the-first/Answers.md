@@ -46,15 +46,20 @@
     
 ## Part 2
 1. Define the problem
-When samples are run on Illumina they are assigned barcodes (indexes) as a way of identifying them. So biological read 1 (forward) and biological read 2 (reverse) are assigned dual matched barcodes index 1 and index 2 (which is the reverse complement of index 1). When sequencing is complete the biological reads and their indexes are outputted to four fastq files. Biological Reads 1 and 2 are labeled as R1 and R4 and indexes 1 and 2 are labelled as R2 and R3, respectively. The issue that arises at this point is that these reads have been multiplexed, they have been pooled together and sequenced simultaneously. What we want to do is demultiplex them--which means to sort the samples according to their assigned barcodes. During this sorting, we will need to account for low quality reads, unknown reads, and index hopped reads, with the ultiamte goal being to separate and assigned these reads, plus dual-matched, to appropriate files.
+
+    When samples are run on Illumina they are assigned barcodes (indexes) as a way of identifying them. So biological read 1 (forward) and biological read 2 (reverse) are assigned dual matched barcodes index 1 and index 2 (which is the reverse complement of index 1). When sequencing is complete the biological reads and their indexes are outputted to four fastq files. Biological Reads 1 and 2 are labeled as R1 and R4 and indexes 1 and 2 are labelled as R2 and R3, respectively. The issue that arises at this point is that these reads have been multiplexed, they have been pooled together and sequenced simultaneously. What we want to do is demultiplex them--which means to sort the samples according to their assigned barcodes. During this sorting, we will need to account for low quality reads, unknown reads, and index hopped reads, with the ultiamte goal being to separate and assigned these reads, plus dual-matched, to appropriate files.
 
 2. Describe output
 
 Multiple fastq files will be outputted by our script. There will be two fastqs for each dual-matched indexes. In the case of dual-matched indexes, biological read 1 and 2 will have the same dual-matched barcode. The outputted files will look like R1 with index1-index2 and another file for R2 with index2-index1. All unknown reads in R1 will be assigned to an unknown R1 file; all index-hopped reads (mean indexes that are not appropriately matched with their counterpart) will be assigned to R1 index hopped, the same formatting goes for R2.
 
 3. Upload your [4 input FASTQ files](../TEST-input_FASTQ) and your [>=6 expected output FASTQ files](../TEST-output_FASTQ).
-4. [Pseudocode here!](./Pseudocode.md)
+4. [Draft Pseudocode here!](./Pseudocode.md)
 
+Updated Pseudocode below
+```
+
+```
 5. High level functions. For each function, be sure to include:
     1. Description/doc string
     2. Function headers (name and parameters)
