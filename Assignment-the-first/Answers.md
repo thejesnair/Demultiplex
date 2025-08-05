@@ -1,7 +1,8 @@
 # Assignment the First
 
 ## Part 1
-1. Be sure to upload your Python script. Provide a link to it here:
+1. Be sure to upload your Python script. Provide a link to it here:<br>
+[QS_distr.py](https://github.com/thejesnair/Demultiplex/blob/ce617b2011b562f83f5a5d6ecece875de927f9dd/Assignment-the-first/QS_distr.py)<br>
 
 | File name | label | Read length | Phred encoding |
 |---|---|---|---|
