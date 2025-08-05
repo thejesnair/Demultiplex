@@ -146,4 +146,16 @@ Notes from peer review:
     
    Can do: <br> ```Else if I1 and I2_RC do not match  AND do not contain 'N'```
 
+### Feedback from P1 and P2 ###
+
+- Need to adjust unit tests, however many records there are need to have same number of outputs
+    - So minimum records needed is 3 to accomplish dual matched, index hopped, and unknown
+- Can fix pseudocode if it helps me but not necessary
+- Additionally, needed to put in p2 helpful outputs
+    - so printing total number of records of dual matched, hopped, unknown
+    - any figures
+    - whatever else may be helpful
+
+### PART3 ###
+**Writing script**
 
