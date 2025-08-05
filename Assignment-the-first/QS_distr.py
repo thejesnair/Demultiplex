@@ -23,8 +23,7 @@ listlength = args.listlength
 
 def init_list(lst: list, listlength: int, value: float=0.0) -> list:
     '''This function takes an empty list and will populate it with
-    the value passed in "value". If no value is passed, initializes list
-    with 101 values of 0.0.'''
+    the value passed in "value".'''
     return [value] * listlength
 
 my_list: list = []
