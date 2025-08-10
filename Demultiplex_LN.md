@@ -138,7 +138,7 @@ Notes from peer review:
 - Emma: switch order of if, else statements so that checking unknown comes first, that way won't accidentally put low quality barcodes and reads as dual paired output
     - i had done this prev and then switched the order for some reason, so dont overthink it
 - Annika mentioned same thing with if/else order
-    - after checking if indexes are valid, THNE sort unknown into unknown file before checking for hopped, matched. 
+    - after checking if indexes are valid, THEN sort unknown into unknown file before checking for hopped, matched. 
 - E mentioned it's unclear if using boolean statements for if statements or nested if statements (either way could probably work)
 - Annika: With large files, defining standalone fxn to handle writing FASTQ won't work. Can only parse one line at a time since files are so large, so need to be written concurrently while parsing. 
 - Only need to check if indexes are valid once so...<br><br>
@@ -159,3 +159,108 @@ Notes from peer review:
 ### PART3 ###
 **Writing script**
 
+- Did not implement QS cutoff/quality filter data
+- demux.py to demultiplex data
+    - created randomtests.py to test smaller bits of code while creating algorithim
+    - was able to test getIndexSet fxn using indexes.txt
+    - testdemuxscript.py edited script *slightly* to work with test files
+    - test output dir "demuxTEST" to see if correct output files
+- tried to use try: except: but didn't work, endless loop
+    - used if not header1 to break loop
+
+### Talapas Issues ###
+8/8/25:
+- Talapas has been incredibly slow, not sure what's going on, both login4 and login.
+
+8/9/25:
+- Having issues with Talapas again, even slower than last night. Tried adding new login node to the remote SSH, but then couldn't log into Talapas at all. 
+    - Tried adjusting the .ssh/config file (?) but that made it worse
+    - Had to comment out the commands with ____ and uncomment top
+        - I know Jason helped me with this earlier in 621 when I was having issues, so I switched it back to what it was before.
+        - No idea why all of a sudden this became an issue, but it seems to be working for now.
+
+    ```bash
+    Host *
+    ServerAliveInterval 60 # Send a "keep-alive" package every 60 secs
+    ServerAliveCountMax 480 # Keep connection alive for 8 hours (60s*480=28,800s)
+    TCPKeepAlive yes
+
+    # Host *
+    # ServerAliveInterval 240# Send a "keep-alive" package every ___ secs
+    # ServerAliveCountMax 240# Keep connection alive for ___ hours
+    # TCPKeepAlive yes
+
+    ```
+# Part3 Script #
+
+**Scripts:**
+- demux.py
+- demux.sh
+
+- testdemuxscript.py (for running testfiles/troubleshooting)
+
+### Troubleshooting ###  
+- Rerun test script an error pops up:
+
+```bash
+(base) [tnair@login1 Demultiplex]$ ./testdemuxscript.py 
+Traceback (most recent call last):
+  File "/gpfs/projects/bgmp/tnair/bioinfo/Bi622/Demultiplex/./testdemuxscript.py", line 146, in <module>
+    FASTQ_files[seq2][0].write(f"{header1} {seq2}-{seq3_RC}\n{seq1}\n{p1}\n{QS1}\n") #index1,r1
+    ~~~~~~~~~~~^^^^^^
+KeyError: 'ATCATCAG'
+```
+
+This error only happens when I rerun script, but if I run it initially there's no issues--files are outputted correctly and contents are correct.
+
+When running actual data, didn't output anything into the files
+
+Identified the issue:
+```python
+    for i in index_set:
+        R1 = open(outputdir + i + "_R1.fq", "w") 
+        R2 = open(outputdir + i + "_R2.fq", "w")
+    *FASTQ_files[i] = (R1, R2) #where i is for index in index_set #0:R1, 1:R2
+    FASTQ_files["hopped"] = open(outputdir + "hopped_R1.fq", "w"), open(outputdir + "hopped_R2.fq", "w") #2:R1 3:R2
+    FASTQ_files["unknown"] = open(outputdir + "unknown_R1.fq", "w"), open(outputdir + "unknown_R2.fq", "w") #4:R1, 5:R2
+    return FASTQ_files
+```
+```
+*needs to be indented
+with the way its written now, is rewriting file--everything was going into unknown output
+```
+
+Another issue:
+Script didn't write index pairs, count, percentage to results.md
+- didn't populate list in if/else loop
+
+
+### Running script ###
+
+Demux37135739
+```
+Command being timed: "./demux.py -r1 /projects/bgmp/shared/2017_sequencing/1294_S1_L008_R1_001.fastq.gz -r2 /projects/bgmp/shared/2017_sequencing/1294_S1_L008_R2_001.fastq.gz -r3 /projects/bgmp/shared/2017_sequencing/1294_S1_L008_R3_001.fastq.gz -r4 /projects/bgmp/shared/2017_sequencing/1294_S1_L008_R4_001.fastq.gz -i /projects/bgmp/shared/2017_sequencing/indexes.txt -o /projects/bgmp/tnair/bioinfo/Bi622/Demultiplex/DemuxP3_FASTQ/"
+User time (seconds): 2449.43
+System time (seconds): 90.19
+Percent of CPU this job got: 96%
+Elapsed (wall clock) time (h:mm:ss or m:ss): 43:56.75
+Maximum resident set size (kbytes): 244840
+Exit status: 0
+```
+
+Quick summary stats of demux
+```
+Total reads: 363246735
+Matched index read pairs: 331755033
+Hopped index read pairs: 707740
+Unknown index read pairs: 30783962
+
+```
+
+*Notes after completing script:*
+
+- Wanted to write results.md file in same .py script, but bc of troubleshooting had to rerun code several times
+    - Could have separated into two scripts, or done a more thorough run through with test files. Or created bigger test files.
+- Having a separate test .py was helpful but have to be careful in making sure changes in test are copied over to actual .py
+
+**demux.py summary in results.md**
