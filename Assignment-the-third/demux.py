@@ -5,6 +5,14 @@ import argparse
 import gzip
 
 '''
+demux.py demultiplexes data from 4 FASTQ files (2 biological reads and 2 indexes)
+It will output a FASTQ file corresponding to every matched index pair for each biological read (totalling 48 FASTQ files)
+as well as 2 FASTQ files per bio read for hopped and unknown indexes
+A summarized report of findings (including totals and percentages) will be generated and outputted as a .md file as well as .txt
+files for hopped and matched index pairs
+'''
+
+'''
 CHECKLIST:
     Fxn: Argparse
     Argparse variables
