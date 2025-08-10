@@ -160,7 +160,7 @@ print(f"Matched index read pairs: {matched_count}")
 print(f"Hopped index read pairs: {hopped_count}")
 print(f"Unknown index read pairs: {unknown_count}")
 
-#Write hopped, matched indexpairs to txt file so can analyze results for summary in results.md file
+#Write hopped, matched indexpairs to txt file
 with open("matched_index_pairs.txt", "w") as matched_output:
     matched_output.write(f'Index Pair\tCount\tPercentage of Reads\n')
     for indexpair, count in sorted(matched_pairs.items(), key=lambda x:x[1], reverse=True): 
@@ -175,6 +175,7 @@ with open("hopped_index_pairs.txt", "w") as hopped_output:
         percent_reads = (count/total_counts) * 100
         hopped_output.write(f"{indexpair}\t{count}\t{percent_reads:.2f}\n")
 
+#Write summary report to .md for github
 with open("results.md", "w") as results:
     results.write('# Demultiplexing Report #\n')
     results.write(f'**Total Reads**: {total_counts}\n\n')
