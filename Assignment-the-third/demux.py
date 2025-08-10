@@ -1,12 +1,5 @@
 #!/usr/bin/env python
 
-# index = "/projects/bgmp/shared/2017_sequencing/indexes.txt"
-# R1 = "/projects/bgmp/shared/2017_sequencing/1294_S1_L008_R1_001.fastq.gz"
-# R2 = "/projects/bgmp/shared/2017_sequencing/1294_S1_L008_R2_001.fastq.gz"
-# R3 = "/projects/bgmp/shared/2017_sequencing/1294_S1_L008_R3_001.fastq.gz"
-# R4 = "/projects/bgmp/shared/2017_sequencing/1294_S1_L008_R4_001.fastq.gz"
-# outputdir = "/projects/bgmp/tnair/bioinfo/Bi622/Demultiplex/DemuxP3_FASTQ/"
-
 import bioinfo
 import argparse
 import gzip
@@ -28,8 +21,8 @@ CHECKLIST:
     number of read pairs hopped index pairs
     number of read pairs that are matched
     total number of reads
-    hopped/mapped txt files with stats
-    results.md with summary of stats
+    hopped/mapped txt files with stats SORTED
+    results.md with summary of stats SORTED
     
 '''
 
@@ -53,10 +46,12 @@ r4 = args.read4
 indexfile = args.indexfile
 outputdir = args.outputdir
 
+#Counters
 matched_count = 0
 hopped_count = 0
 unknown_count = 0
 
+#Dict for txt files/results.md
 matched_pairs = {}
 hopped_pairs = {}
 
@@ -82,7 +77,6 @@ def getIndexSet(indexfile: str) -> set:
 index_set = getIndexSet(indexfile)
 
 #Create files to write the 48 FASTQ files for matched index pairs
-
 FASTQ_files = {}
 
 def open_files(index_set: set, outputdir: str) -> dict:
@@ -93,7 +87,7 @@ def open_files(index_set: set, outputdir: str) -> dict:
     for i in index_set:
         R1 = open(outputdir + i + "_R1.fq", "w") 
         R2 = open(outputdir + i + "_R2.fq", "w")
-        FASTQ_files[i] = (R1, R2) #where i is for index in index_set #0:R1, 1:R2
+        FASTQ_files[i] = (R1, R2) #where i is for index in index_set #0:R1, 1:R2, careful with indenting
     FASTQ_files["hopped"] = open(outputdir + "hopped_R1.fq", "w"), open(outputdir + "hopped_R2.fq", "w") #2:R1 3:R2
     FASTQ_files["unknown"] = open(outputdir + "unknown_R1.fq", "w"), open(outputdir + "unknown_R2.fq", "w") #4:R1, 5:R2
     return FASTQ_files
@@ -109,10 +103,8 @@ def close_files(FASTQ_files: dict) -> None:
         f2.close()
 
 #Open files to start parsing through records and determining if indexes match
-with gzip.open(r1, "rt", encoding='utf-8') as r1, \
-gzip.open(r2, "rt", encoding='utf-8') as r2, \
-gzip.open(r3, "rt", encoding='utf-8') as r3, \
-gzip.open(r4, "rt", encoding='utf-8') as r4:
+with gzip.open(r1, "rt", encoding='utf-8') as r1, gzip.open(r2, "rt", encoding='utf-8') as r2, \
+gzip.open(r3, "rt", encoding='utf-8') as r3, gzip.open(r4, "rt", encoding='utf-8') as r4:
 
     while True:
         header1, seq1, p1, QS1 = FASTQ_record(r1) #assigns record lines to variables
@@ -124,18 +116,22 @@ gzip.open(r4, "rt", encoding='utf-8') as r4:
             break
 
         seq3_RC = bioinfo.reverse_complement(seq3)  #need RC of index 2 to check against index 1
+        index_pair = f"{seq2}-{seq3_RC}"
+        reverse_indexpair = f"{seq3_RC}-{seq2}"
 
         #Dual matched
         if seq2 == seq3_RC and seq2 in index_set:   #if index matched AND known 
             matched_count += 1
-            FASTQ_files[seq2][0].write(f"{header1} {seq2}-{seq3_RC}\n{seq1}\n{p1}\n{QS1}\n") #index1,r1
-            FASTQ_files[seq2][1].write(f"{header4} {seq3_RC}-{seq2}\n{seq4}\n{p4}\n{QS4}\n") #index2,r2
+            FASTQ_files[seq2][0].write(f"{header1} {index_pair}\n{seq1}\n{p1}\n{QS1}\n") #index1,r1
+            FASTQ_files[seq2][1].write(f"{header4} {reverse_indexpair}\n{seq4}\n{p4}\n{QS4}\n") #index2,r2
+            matched_pairs[index_pair] = matched_pairs.get(index_pair, 0) +1 #if no value assoc, increments by 1 for index pair
 
         #Hopped
         elif seq2 != seq3_RC and seq2 in index_set and seq3_RC in index_set:  #if NOT index matched AND known index
             hopped_count += 1
-            FASTQ_files['hopped'][0].write(f"{header1} {seq2}-{seq3_RC}\n{seq1}\n{p1}\n{QS1}\n")
-            FASTQ_files['hopped'][1].write(f"{header4} {seq3_RC}-{seq2}\n{seq4}\n{p4}\n{QS4}\n")
+            FASTQ_files['hopped'][0].write(f"{header1} {index_pair}\n{seq1}\n{p1}\n{QS1}\n")
+            FASTQ_files['hopped'][1].write(f"{header4} {reverse_indexpair}\n{seq4}\n{p4}\n{QS4}\n")
+            hopped_pairs[index_pair] = hopped_pairs.get(index_pair, 0) +1 #if no value assoc, increments by 1 for index pair
 
         #Unknown
         else:
@@ -145,54 +141,49 @@ gzip.open(r4, "rt", encoding='utf-8') as r4:
 
 close_files(FASTQ_files)
 
+#Percent variables
 total_counts = matched_count + hopped_count + unknown_count
+matched_percent = (matched_count/total_counts) * 100
+hopped_percent = (hopped_count/total_counts) * 100
+unknown_percent = (unknown_count/total_counts) * 100
+
+print(f"Total reads: {total_counts}")
 print(f"Matched index read pairs: {matched_count}")
 print(f"Hopped index read pairs: {hopped_count}")
 print(f"Unknown index read pairs: {unknown_count}")
-print(f"Total reads: {total_counts}")        
 
-
-#Percent reads
-unknown_percent = (unknown_count/total_counts) * 100
-matched_percent = (matched_count/total_counts) * 100
-hopped_percent = (hopped_count/total_counts) * 100
-
-#Write stats to txt file
+#Write hopped, matched indexpairs to txt file so can analyze results for summary in results.md file
 with open("matched_index_pairs.txt", "w") as matched_output:
-    for indexpair, count in matched_pairs.items():
-        matched_output.write(f'Index Pair\tCount\tPercentage of Reads\n')
+    matched_output.write(f'Index Pair\tCount\tPercentage of Reads\n')
+    for indexpair, count in sorted(matched_pairs.items(), key=lambda x:x[1], reverse=True): 
+        #remember lambda is just way to look at pattern, x is for (indexpair, count) x[1] is saying to look at the count value
+        #reverse=True, descending orders
         percent_reads = (count/total_counts) * 100
         matched_output.write(f"{indexpair}\t{count}\t{percent_reads:.2f}\n")
 
 with open("hopped_index_pairs.txt", "w") as hopped_output:
     hopped_output.write(f'Index Pair\tCount\tPercentage of Reads\n')
-    for indexpair, count in hopped_pairs.items():
+    for indexpair, count in sorted(hopped_pairs.items(), key=lambda x:x[1], reverse=True):
         percent_reads = (count/total_counts) * 100
         hopped_output.write(f"{indexpair}\t{count}\t{percent_reads:.2f}\n")
 
-#Write stats to md file for ease of viewing/github
 with open("results.md", "w") as results:
-    results.write('# Demultiplexing Summary #\n')
+    results.write('# Demultiplexing Report #\n')
     results.write(f'**Total Reads**: {total_counts}\n\n')
-    results.write(f'**Matched indexes** : {matched_count}\n')
-    results.write(f' - Percent matched indexes: {matched_percent:.2f}%\n\n')
-    results.write(f'**Hopped indexes**: {hopped_count}\n')
-    results.write(f' - Percent hopped indexes: {hopped_percent:.2f}%\n\n')
-    results.write(f'**Unknown indexes**: {unknown_count}\n')
-    results.write(f'- Unknown percentage indexes: {unknown_percent:.2f}%\n\n')
+    results.write(f'**Matched indexes** : {matched_count} ({matched_percent:.2f}%)\n\n')
+    results.write(f'**Hopped indexes**: {hopped_count} ({hopped_percent:.2f}%)\n\n')
+    results.write(f'**Unknown indexes**: {unknown_count} ({unknown_percent:.2f}%)\n')
 
     results.write("## Matched Indexes ##\n\n")
-    results.write("| Matched Index Pair | Count | Percentage of Reads |\n")
+    results.write("| Matched Index Pair | Count | Percentage Reads (Total Matched) |\n")
     results.write("|------------|-------|---------------------|\n")
-    for indexpair, count in matched_pairs.items():
-        percent_reads = (count/total_counts) * 100
+    for indexpair, count in sorted(matched_pairs.items(), key=lambda x:x[1], reverse=True):
+        percent_reads = (count/matched_count) * 100
         results.write(f'{indexpair} | {count} | {percent_reads:.2f}% |\n')
 
     results.write("## Hopped Indexes ##\n\n")
-    results.write("| Hopped Index Pair | Count | Percentage of Reads |\n")
+    results.write("| Hopped Index Pair | Count | Percentage Reads (Total Hopped) |\n")
     results.write("|------------|-------|---------------------|\n")
-    for indexpair, count in hopped_pairs.items():
-        percent_reads = (count/total_counts) * 100
+    for indexpair, count in sorted(hopped_pairs.items(), key=lambda x:x[1], reverse=True):
+        percent_reads = (count/hopped_count) * 100
         results.write(f'{indexpair} | {count} | {percent_reads:.2f}% |\n')
-
-
