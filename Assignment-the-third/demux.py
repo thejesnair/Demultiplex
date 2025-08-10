@@ -166,14 +166,13 @@ with open("matched_index_pairs.txt", "w") as matched_output:
     for indexpair, count in sorted(matched_pairs.items(), key=lambda x:x[1], reverse=True): 
         #remember lambda is just way to look at pattern, x is for (indexpair, count) x[1] is saying to look at the count value
         #reverse=True, descending orders
-        percent_reads = (count/total_counts) * 100
-        matched_output.write(f"{indexpair}\t{count}\t{percent_reads:.2f}\n")
+        matched_output.write(f"{indexpair}\t{count}\t{matched_percent:.2f}\n")
 
 with open("hopped_index_pairs.txt", "w") as hopped_output:
     hopped_output.write(f'Index Pair\tCount\tPercentage of Reads\n')
     for indexpair, count in sorted(hopped_pairs.items(), key=lambda x:x[1], reverse=True):
         percent_reads = (count/total_counts) * 100
-        hopped_output.write(f"{indexpair}\t{count}\t{percent_reads:.2f}\n")
+        hopped_output.write(f"{indexpair}\t{count}\t{hopped_percent:.2f}\n")
 
 #Write summary report to .md for github
 with open("results.md", "w") as results:
