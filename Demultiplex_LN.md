@@ -254,7 +254,6 @@ Total reads: 363246735
 Matched index read pairs: 331755033
 Hopped index read pairs: 707740
 Unknown index read pairs: 30783962
-
 ```
 
 *Notes after completing script:*
