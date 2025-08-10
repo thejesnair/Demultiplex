@@ -76,7 +76,7 @@ requires file to already be opened '''
 
 #Get 24 known indexes, assign to set
 def getIndexSet(indexfile: str) -> set:
-    ''' Reads index file, grabs fourth column indexes and assigns to a set '''
+    ''' Reads index file, grabs fifth column indexes and assigns to a set '''
     with open(indexfile, "r") as f:
         next(f)
         index_set = {(line.strip().split()[4]) for line in f} #strips 5th col, splits into list of strs
