@@ -171,7 +171,6 @@ with open("matched_index_pairs.txt", "w") as matched_output:
 with open("hopped_index_pairs.txt", "w") as hopped_output:
     hopped_output.write(f'Index Pair\tCount\tPercentage of Reads\n')
     for indexpair, count in sorted(hopped_pairs.items(), key=lambda x:x[1], reverse=True):
-        percent_reads = (count/total_counts) * 100
         hopped_output.write(f"{indexpair}\t{count}\t{hopped_percent:.2f}\n")
 
 #Write summary report to .md for github
