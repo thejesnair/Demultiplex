@@ -1,12 +1,33 @@
-# Demultiplexing
+# Demultiplexing and Index Swapping
 
-This repo contains all the files used in creating a Demultiplexing python script, `demux.py`.
+**Goals**: Determine the level of index swapping and undetermined index-pairs, before and after quality filtering, from sequencing done by the 2017 BGMP cohort. 
 
-Part 1 contains quality score distributions per nucleotide for the four FASTQ files the final script was run on.
+The data must first be demultiplexed as demultiplexing is necessary for downstream analyses.
 
-Part 2 contains the final demultiplexing script 
+The goal of the `demux.py` script is to demultiplex samples to create 48 FASTQ files that contain the acceptable index pairs (read1 and read2 for 24 different index pairs), and 2 FASTQ files with index-hopped read-pairs, and 2 FASTQ files containing undetermined (non-matching or low-quality index-pairs)
 
-The following are contained in **Part 1** and **Part 2**
+
+There are 24 indexed (dual matched) libraries for sequencing. The indexes are:
+
+```
+B1	GTAGCGTA    A5	CGATCGAT    C1	GATCAAGG
+B9	AACAGCGA    C9	TAGCCATG    C3	CGGTAATC
+B3	CTCTGGAT    C4	TACCGGAT    A11	CTAGCTCA
+C7	CACTTCAC    B2	GCTACTCT    A1	ACGATCAG
+B7	TATGGCAC    A3	TGTTCCGT    B4	GTCCTAAG
+A12	TCGACAAG    C10	TCTTCGAC    A2	ATCATGCG
+C2	ATCGTGGT    A10	TCGAGAGT    B8	TCGGATTC
+A7	GATCTTGC    B10	AGAGTCCA    A8	AGGATAGC
+```
+
+The 4 FASTQ files are: 
+```bash
+1294_S1_L008_R1_001.fastq.gz
+1294_S1_L008_R2_001.fastq.gz
+1294_S1_L008_R3_001.fastq.gz
+1294_S1_L008_R4_001.fastq.gz
+```
+
 
 ## Part 1
 - Quality score distribution per nucleotide figures
@@ -19,5 +40,3 @@ The following are contained in **Part 1** and **Part 2**
 - `bioinfo.py` containing various functions
 - `demux.py` demultiplexing script
 - `results.md` summarized report
-
-`Demultiplex_LN.md` outlines important steps, commands, notes, etc. over the course of developing this program
