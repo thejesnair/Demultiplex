@@ -1,11 +1,23 @@
 # Demultiplexing
 
-## [Assignment the First](Assignment-the-first)
-- [Part 1](Assignment-the-first/README.md#part-1--quality-score-distribution-per-nucleotide): Quality Score Distribution per-nucleotide
-- [Part 2](Assignment-the-first/README.md#part-2--develop-an-algorithm-to-de-multiplex-the-samples): Develop an algorithm using psuedocode to de-multiplex the samples
+This repo contains all the files used in creating a Demultiplexing python script, `demux.py`.
 
-## [Assignment the Second](Assignment-the-second)
-- Review peer psuedocode
+Part 1 contains quality score distributions per nucleotide for the four FASTQ files the final script was run on.
 
-## [Assignment the Third](Assignment-the-third)
-- Write the code
+Part 2 contains the final demultiplexing script 
+
+The following are contained in **Part 1** and **Part 2**
+
+## Part 1
+- Quality score distribution per nucleotide figures
+- `QS_distr.py`
+- Pseudocode outlining overall assignment goal
+- Test figures
+
+
+## Part 2
+- `bioinfo.py` containing various functions
+- `demux.py` demultiplexing script
+- `results.md` summarized report
+
+`Demultiplex_LN.md` outlines important steps, commands, notes, etc. over the course of developing this program
